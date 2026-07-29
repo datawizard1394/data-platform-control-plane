@@ -1,0 +1,15 @@
+{
+  "metadata": {
+    "synthetic": true,
+    "production_deployment": false
+  },
+  "resources": {
+    "dataset.raw_orders": {
+      "fingerprint": "stale-demo-fingerprint"
+    },
+    "dataset.legacy_export": {
+      "fingerprint": "orphaned-demo-fingerprint"
+    }
+  }
+}
+
