@@ -1,0 +1,72 @@
+{
+  "api_version": "platform.demo/v1",
+  "kind": "Dataset",
+  "metadata": {
+    "name": "daily_revenue",
+    "owner": "team-commerce-analytics",
+    "domain": "commerce",
+    "description": "Synthetic daily revenue aggregate by country and sales date.",
+    "synthetic": true,
+    "production_deployment": false,
+    "tags": ["revenue", "aggregate"]
+  },
+  "source": {
+    "type": "dataset",
+    "uri": "dataset://curated_orders",
+    "format": "parquet"
+  },
+  "schema": [
+    {
+      "name": "sales_date",
+      "type": "date",
+      "nullable": false,
+      "classification": "internal"
+    },
+    {
+      "name": "country_code",
+      "type": "string",
+      "nullable": false,
+      "classification": "internal"
+    },
+    {
+      "name": "gross_revenue",
+      "type": "decimal",
+      "nullable": false,
+      "classification": "internal"
+    },
+    {
+      "name": "order_count",
+      "type": "integer",
+      "nullable": false,
+      "classification": "internal"
+    }
+  ],
+  "classification": {
+    "level": "internal",
+    "pii_fields": []
+  },
+  "retention": {
+    "days": 1095,
+    "reason": "Synthetic long-range trend analysis."
+  },
+  "slo": {
+    "freshness_minutes": 240,
+    "availability_percentage": 99.9
+  },
+  "dependencies": ["curated_orders"],
+  "delivery": {
+    "layer": "gold",
+    "partition_by": ["sales_date"]
+  },
+  "quality": [
+    {
+      "type": "not_null",
+      "columns": ["sales_date", "country_code", "gross_revenue"]
+    },
+    {
+      "type": "unique",
+      "columns": ["sales_date", "country_code"]
+    }
+  ]
+}
+

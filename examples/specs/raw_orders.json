@@ -1,0 +1,72 @@
+{
+  "api_version": "platform.demo/v1",
+  "kind": "Dataset",
+  "metadata": {
+    "name": "raw_orders",
+    "owner": "team-commerce-data",
+    "domain": "commerce",
+    "description": "Synthetic landing records for commerce order events.",
+    "synthetic": true,
+    "production_deployment": false,
+    "tags": ["orders", "landing"]
+  },
+  "source": {
+    "type": "object_store",
+    "uri": "synthetic://landing/commerce/orders",
+    "format": "ndjson"
+  },
+  "schema": [
+    {
+      "name": "order_id",
+      "type": "string",
+      "nullable": false,
+      "classification": "internal"
+    },
+    {
+      "name": "customer_id",
+      "type": "string",
+      "nullable": false,
+      "classification": "confidential"
+    },
+    {
+      "name": "ordered_at",
+      "type": "timestamp",
+      "nullable": false,
+      "classification": "internal"
+    },
+    {
+      "name": "order_amount",
+      "type": "decimal",
+      "nullable": false,
+      "classification": "confidential"
+    }
+  ],
+  "classification": {
+    "level": "confidential",
+    "pii_fields": ["customer_id"]
+  },
+  "retention": {
+    "days": 365,
+    "reason": "Synthetic replay and reconciliation window."
+  },
+  "slo": {
+    "freshness_minutes": 60,
+    "availability_percentage": 99.5
+  },
+  "dependencies": [],
+  "delivery": {
+    "layer": "bronze",
+    "partition_by": ["ordered_at"]
+  },
+  "quality": [
+    {
+      "type": "not_null",
+      "columns": ["order_id", "customer_id", "ordered_at"]
+    },
+    {
+      "type": "unique",
+      "columns": ["order_id"]
+    }
+  ]
+}
+

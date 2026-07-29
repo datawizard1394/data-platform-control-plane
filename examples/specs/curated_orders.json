@@ -1,0 +1,78 @@
+{
+  "api_version": "platform.demo/v1",
+  "kind": "Dataset",
+  "metadata": {
+    "name": "curated_orders",
+    "owner": "team-commerce-data",
+    "domain": "commerce",
+    "description": "Synthetic validated order facts at one row per order.",
+    "synthetic": true,
+    "production_deployment": false,
+    "tags": ["orders", "curated"]
+  },
+  "source": {
+    "type": "dataset",
+    "uri": "dataset://raw_orders",
+    "format": "parquet"
+  },
+  "schema": [
+    {
+      "name": "order_id",
+      "type": "string",
+      "nullable": false,
+      "classification": "internal"
+    },
+    {
+      "name": "customer_id",
+      "type": "string",
+      "nullable": false,
+      "classification": "confidential"
+    },
+    {
+      "name": "ordered_at",
+      "type": "timestamp",
+      "nullable": false,
+      "classification": "internal"
+    },
+    {
+      "name": "order_amount",
+      "type": "decimal",
+      "nullable": false,
+      "classification": "confidential"
+    },
+    {
+      "name": "country_code",
+      "type": "string",
+      "nullable": true,
+      "classification": "internal"
+    }
+  ],
+  "classification": {
+    "level": "confidential",
+    "pii_fields": ["customer_id"]
+  },
+  "retention": {
+    "days": 730,
+    "reason": "Synthetic analytical comparison window."
+  },
+  "slo": {
+    "freshness_minutes": 120,
+    "availability_percentage": 99.5
+  },
+  "dependencies": ["raw_orders"],
+  "delivery": {
+    "layer": "silver",
+    "partition_by": ["ordered_at"]
+  },
+  "quality": [
+    {
+      "type": "not_null",
+      "columns": ["order_id", "ordered_at", "order_amount"]
+    },
+    {
+      "type": "unique",
+      "columns": ["order_id"]
+    }
+  ]
+}
+
