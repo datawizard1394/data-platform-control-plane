@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  policy-and-plan:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install .
+      - run: make check
+      - run: data-control-plane --spec-dir examples/specs --policy config/policy.json validate
+      - run: data-control-plane --spec-dir examples/specs --policy config/policy.json plan --actual examples/actual_state.json
+      - run: data-control-plane --spec-dir examples/specs --policy config/policy.json compile --output artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: synthetic-control-plane-manifests-${{ matrix.python-version }}
+          path: artifacts/
+
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build --tag control-plane-demo:${{ github.sha }} .
+      - run: docker run --rm control-plane-demo:${{ github.sha }}
+
