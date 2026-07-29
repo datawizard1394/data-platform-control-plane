@@ -1,0 +1,22 @@
+{
+  "policy_version": "1.0",
+  "required_api_version": "platform.demo/v1",
+  "owner_pattern": "^team-[a-z0-9-]+$",
+  "allowed_source_types": ["dataset", "object_store"],
+  "allowed_formats": ["json", "ndjson", "parquet"],
+  "classification_rank": {
+    "public": 0,
+    "internal": 1,
+    "confidential": 2,
+    "restricted": 3
+  },
+  "max_retention_days": {
+    "public": 3650,
+    "internal": 1825,
+    "confidential": 730,
+    "restricted": 365
+  },
+  "max_freshness_minutes": 1440,
+  "minimum_availability_percentage": 99.0
+}
+
